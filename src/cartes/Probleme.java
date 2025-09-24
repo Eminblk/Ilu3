@@ -1,6 +1,6 @@
 package cartes;
 
-public class Probleme {
+public class Probleme extends Carte {
 	
 	Type type; 
 	
@@ -10,6 +10,11 @@ public class Probleme {
 	
 	public Type getType() {
 		return type;
+	}
+	
+	@Override
+	public String toString() {
+		return type.toString();
 	}
 
 }

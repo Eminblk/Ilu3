@@ -6,6 +6,10 @@ public class Bataille extends Probleme{
 		super(type);
 	}
 	
+	@Override
 	
+	public String toString() {
+		return getType().getAttaque();
+	}
 
 }

@@ -1,5 +1,5 @@
 package cartes;
 
-public class FinLimite {
+public class FinLimite extends Limite{
 
 }

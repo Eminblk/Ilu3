@@ -1,5 +1,5 @@
 package cartes;
 
-public class Limite {
+public class Limite extends Carte {
 
 }
