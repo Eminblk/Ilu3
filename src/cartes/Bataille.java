@@ -7,7 +7,6 @@ public class Bataille extends Probleme{
 	}
 	
 	@Override
-	
 	public String toString() {
 		return getType().getAttaque();
 	}

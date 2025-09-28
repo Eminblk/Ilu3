@@ -6,7 +6,7 @@ public class Botte extends Probleme{
 		super(type);
 	}
 	
-
+	@Override
 	public String toString() {
 		return getType().getBotte();
 	}
