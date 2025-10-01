@@ -12,65 +12,65 @@ import jeu.Sabot;
 
 public class TestSabot {
 
-    private final JeuDeCartes jeu = new JeuDeCartes();
-    private final Sabot sabot = new Sabot(jeu.donnerCartes());
-    
-    public void questionA() {
-        while (!sabot.estVide()) {
-            Carte carte = sabot.piocher();
-            System.out.println("Je pioche " + carte);
-        }
-    }
+	private final JeuDeCartes jeu = new JeuDeCartes();
+	private final Sabot sabot = new Sabot(jeu.donnerCartes());
 
-    public void questionB() {
-        for (Iterator<Carte> it = sabot.iterator(); it.hasNext();) {
-            Carte carte = it.next();
-            System.out.println("Je pioche " + carte);
-            it.remove();
-        }
-    }
+	public void questionA() {
+		while (!sabot.estVide()) {
+			Carte carte = sabot.piocher();
+			System.out.println("Je pioche " + carte);
+		}
+	}
 
-    public void questionC() {
-        try {
+	public void questionB() {
+		for (Iterator<Carte> it = sabot.iterator(); it.hasNext();) {
+			Carte carte = it.next();
+			System.out.println("Je pioche " + carte);
+			it.remove();
+		}
+	}
 
-            Carte cartePiochee = sabot.piocher();
-            System.out.println("Je pioche (hors boucle) " + cartePiochee);
-            for (Iterator<Carte> it = sabot.iterator(); it.hasNext();) {
-                Carte carte = it.next();
-                System.out.println("Je pioche " + carte);
-                it.remove();
+	public void questionC() {
+		try {
+			Carte cartePiochee = sabot.piocher();
+			System.out.println("Je pioche " + cartePiochee);
 
-                try {
-                    sabot.piocher();
-                } catch (ConcurrentModificationException e) {
-                    System.out.println("Exception attendue (piocher pendant lâ€™itÃ©ration) : " + e);
-                }
+			try {
+				for (Iterator<Carte> iterator = sabot.iterator(); iterator.hasNext();) {
+					Carte carte = iterator.next();
+					System.out.println("Je pioche " + carte);
+					sabot.piocher();
+				}
+			} catch (ConcurrentModificationException e) {
+				System.out.println("Exception attendue car piocher pendant l’itération : " + e);
+			}
 
-                try {
-                    sabot.ajouterCarte(new Botte(Type.ACCIDENT));
-                } catch (ConcurrentModificationException e) {
-                    System.out.println("Exception attendue (ajout pendant lâ€™itÃ©ration) : " + e);
-                }
-            }
+			try {
+				for (Iterator<Carte> iterator = sabot.iterator(); iterator.hasNext();) {
+					Carte carte = iterator.next();
+					System.out.println("Je pioche " + carte);
+					sabot.ajouterCarte(new Botte(Type.ACCIDENT));
+				}
+			} catch (ConcurrentModificationException e) {
+				System.out.println("Exception attendue car ajout pendant l’itération : " + e);
+			}
+			
 
-            Iterator<Carte> fin = sabot.iterator();
-            System.out.println("\nLa pioche contient encore des cartes ? " + fin.hasNext());
+		} catch (NoSuchElementException e) {
+			System.out.println("La pioche est vide: " + e);
+		}
+	}
 
-        } catch (NoSuchElementException e) {
-            System.out.println("La pioche est vide : " + e);
-        }
-    }
+	public static void main(String[] args) {
+		TestSabot test = new TestSabot();
+		System.out.println("--- Question A ---");
+		test.questionA();
+		System.out.println("\n--- Question B ---");
+		TestSabot test2 = new TestSabot();
+		test2.questionB();
 
-    public static void main(String[] args) {
-        TestSabot test = new TestSabot();
-        System.out.println("--- Question A ---");
-        test.questionA();
-        System.out.println("\n--- Question B ---");
-        TestSabot test2 = new TestSabot();
-        test2.questionB();
-
-        System.out.println("\n--- Question C ---");
-        TestSabot test3 = new TestSabot();
-        test3.questionC();
-    }
+		System.out.println("\n--- Question C ---");
+		TestSabot test3 = new TestSabot();
+		test3.questionC();
+	}
 }

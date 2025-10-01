@@ -42,12 +42,23 @@ public class JeuDeCartes {
 		return sb.toString();
 	}
 
-	public boolean checkCount() {
+	public boolean checkCountTotal() {
 		int total = 0;
 		for (Configuration conf : configurations) {
 			total += conf.getNbExemplaires();
 		}
 		return total == 106;
+	}
+	
+	public boolean checkCount() {
+		boolean verif = true;
+		JeuDeCartes cartesVerif = new JeuDeCartes();
+		Carte[] testDonnerCartes = donnerCartes();
+		for (Configuration conf : configurations) {
+			if(conf.getNbExemplaires() != )
+		}
+		
+		return verif;
 	}
 
 	public Carte[] donnerCartes() {

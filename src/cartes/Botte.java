@@ -10,5 +10,13 @@ public class Botte extends Probleme{
 	public String toString() {
 		return getType().getBotte();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Bataille Botte) {
+			return type.equals(Botte.getType());
+		}
+		return false;
+	}
 
 }
