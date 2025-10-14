@@ -1,5 +1,9 @@
-	package cartes;
+package cartes;
 
-public class Carte {
+public abstract class Carte {
 
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
+    }
 }

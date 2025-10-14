@@ -9,6 +9,15 @@ public class TestJeuDeCartes {
 
         if (!jeu.checkCountTotal()) {
             System.out.println("erreur de nombre");
+        } else {
+        	System.out.println(" Nombre correct pour checkCountTotal");
         }
+        
+        if(!jeu.checkCount()) {
+        	System.out.println("Erreur de nombre par configuration");
+        } else {
+        	System.out.println(" Nombre correct pour checkCount");
+        }
+        
     }
 }

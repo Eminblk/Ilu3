@@ -13,10 +13,11 @@ public class Botte extends Probleme{
 	
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof Bataille Botte) {
-			return type.equals(Botte.getType());
-		}
-		return false;
+	    if (obj instanceof Botte botte) {
+	        return type.equals(botte.getType());
+	    }
+	    return false;
 	}
+
 
 }

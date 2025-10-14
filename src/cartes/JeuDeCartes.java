@@ -52,29 +52,54 @@ public class JeuDeCartes {
 	
 	public boolean checkCount() {
 		boolean verif = true;
-		JeuDeCartes cartesVerif = new JeuDeCartes();
 		Carte[] testDonnerCartes = donnerCartes();
 		for (Configuration conf : configurations) {
-			if(conf.getNbExemplaires() != )
+			Carte carteReference = conf.getCarte();
+			int attendu = conf.getNbExemplaires();
+			int compte = 0 ;
+			
+			for (Carte c : testDonnerCartes) {
+				if(c.equals(carteReference )){
+					compte++;
+				}
+			}
+			
+			if(compte!=attendu) {
+				verif = false;
+			}
 		}
 		
 		return verif;
 	}
 
 	public Carte[] donnerCartes() {
-		int total = 0;
-		for (Configuration conf : configurations) {
-			total += conf.getNbExemplaires();
-		}
-		Carte[] toutes = new Carte[total];
-		int index = 0;
-		for (Configuration conf : configurations) {
-			for (int i = 0; i < conf.getNbExemplaires(); i++) {
-				toutes[index++] = conf.getCarte();
-			}
-		}
-		return toutes;
-	}	
+	    int total = 0;
+	    for (Configuration conf : configurations) {
+	        total += conf.getNbExemplaires();
+	    }
+	    Carte[] toutes = new Carte[total];
+	    int index = 0;
+	    for (Configuration conf : configurations) {
+	        for (int i = 0; i < conf.getNbExemplaires(); i++) {
+	            Carte carte = conf.getCarte();
+	            if (carte instanceof Borne) {
+	                toutes[index++] = new Borne(((Borne) carte).getKm());
+	            } else if (carte instanceof Attaque) {
+	                toutes[index++] = new Attaque(((Attaque) carte).getType());
+	            } else if (carte instanceof Parade) {
+	                toutes[index++] = new Parade(((Parade) carte).getType());
+	            } else if (carte instanceof Botte) {
+	                toutes[index++] = new Botte(((Botte) carte).getType());
+	            } else if (carte instanceof FinLimite) {
+	                toutes[index++] = new FinLimite();
+	            } else if (carte instanceof DebutLimite) {
+	                toutes[index++] = new DebutLimite();
+	            }
+	        }
+	    }
+	    return toutes;
+	}
+
 
 	private class Configuration {
 		private final int nbExemplaires;
