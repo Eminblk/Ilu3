@@ -29,21 +29,21 @@ public class TestGestionCartes {
         }
 
         List<Carte> listeCartes = new ArrayList<>(listeCarteNonMelangee);
-        System.out.println("=== Liste originale ===");
+        System.out.println("=- Liste originale -=");
         System.out.println(listeCartes);
 
         listeCartes = GestionCartes.melanger(listeCartes);
-        System.out.println("\n=== Liste mélangée ===");
+        System.out.println("\n- Liste melange --");
         System.out.println(listeCartes);
 
-        System.out.println("\nListe mélangée sans erreur ? "
+        System.out.println("\nListe melange sans erreur ? "
                 + GestionCartes.verifierMelange(listeCarteNonMelangee, listeCartes));
 
         listeCartes = GestionCartes.rassembler(listeCartes);
-        System.out.println("\n=== Liste rassemblée ===");
+        System.out.println("\n=- Liste rassemble -=");
         System.out.println(listeCartes);
 
-        System.out.println("\nListe rassemblée sans erreur ? "
+        System.out.println("\nListe rassemble sans erreur ? "
                 + GestionCartes.verifierRassemblement(listeCartes));
 
         System.out.println("\nTest des occurrences conservées ? "
@@ -54,10 +54,10 @@ public class TestGestionCartes {
         List<Integer> l3 = List.of(1, 4, 3, 2);
         List<Integer> l4 = List.of(1, 1, 2, 3, 1);
 
-        System.out.println("\n===== Tests de rassemblement simples =====");
-        System.out.println("[] → " + GestionCartes.verifierRassemblement(l1));
-        System.out.println("[1,1,2,1,3] → " + GestionCartes.verifierRassemblement(new ArrayList<>(l2)));
-        System.out.println("[1,4,3,2] → " + GestionCartes.verifierRassemblement(new ArrayList<>(l3)));
-        System.out.println("[1,1,2,3,1] → " + GestionCartes.verifierRassemblement(new ArrayList<>(l4)));
+        System.out.println("\n==- Tests de rassemblement simples -==");
+        System.out.println("[]" + GestionCartes.verifierRassemblement(l1));
+        System.out.println("[1,1,2,1,3]" + GestionCartes.verifierRassemblement(new ArrayList<>(l2)));
+        System.out.println("[1,4,3,2]" + GestionCartes.verifierRassemblement(new ArrayList<>(l3)));
+        System.out.println("[1,1,2,3,1]� " + GestionCartes.verifierRassemblement(new ArrayList<>(l4)));
     }
 }

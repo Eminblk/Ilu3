@@ -4,14 +4,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Random;
 
 public class GestionCartes {
+	private static final Random RANDOM = new Random();
 
 	public static <E> E extraire(List<E> liste) {
 		if (liste.isEmpty()) {
 			throw new IllegalArgumentException("La liste ne doit pas être vide");
 		}
 		int index = liste.size() - 1; // on prend le dernier
+		E element = liste.get(index);
+		liste.remove(index);
+		return element;
+	}
+	
+	public static <E> E extraireV2(List<E> liste) {
+		if (liste.isEmpty()) {
+			throw new IllegalArgumentException("La liste ne doit pas être vide");
+		}
+		int index = RANDOM.nextInt(liste.size());
 		E element = liste.get(index);
 		liste.remove(index);
 		return element;
@@ -31,11 +43,11 @@ public class GestionCartes {
 		}
 		return element;
 	}
-
+	
 	public static <E> List<E> melanger(List<E> liste) {
 		List<E> melangee = new ArrayList<>();
 		while (!liste.isEmpty()) {
-			E e = extraire(liste);
+			E e = extraireV2(liste);
 			melangee.add(e);
 		}
 		return melangee;
