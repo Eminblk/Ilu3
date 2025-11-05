@@ -6,33 +6,30 @@ import java.util.List;
 
 import cartes.Carte;
 
-public class MainJoueur implements Iterable<Carte>{
+public class MainJoueur implements Iterable<Carte> {
 	
-	List<Carte> listeMainJoueur = new ArrayList<>();
+	private final List<Carte> listeMainJoueur = new ArrayList<>();
 	
 	public void prendre(Carte carte) {
 		listeMainJoueur.add(carte);
 	}
 	
 	public void jouer(Carte carte) {
-		assert(!listeMainJoueur.isEmpty());
+		assert listeMainJoueur.contains(carte);
 		listeMainJoueur.remove(carte);
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for(Carte carte : listeMainJoueur) {
-			sb.append(carte);
+		for (Carte carte : listeMainJoueur) {
+			sb.append(carte).append(" ");
 		}
-		return sb.toString();
-		
+		return sb.toString().trim();
 	}
 
-	//Pour valider l'implémentation itérable
 	@Override
 	public Iterator<Carte> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return listeMainJoueur.iterator();
 	}
-
 }
