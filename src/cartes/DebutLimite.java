@@ -1,6 +1,7 @@
 package cartes;
 
-public class DebutLimite extends Limite {
+public class DebutLimite extends Limite{
+	
 	@Override
 	public String toString() {
 		return "Limite 50";
@@ -8,6 +9,7 @@ public class DebutLimite extends Limite {
 	
 	@Override
 	public boolean equals(Object obj) {
-	    return obj != null && getClass() == obj.getClass();
+		return obj!= null && getClass() == obj.getClass();
 	}
+
 }

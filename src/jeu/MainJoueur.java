@@ -3,33 +3,35 @@ package jeu;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.concurrent.ArrayBlockingQueue;
+import cartes.*;
+import utils.*;
 
-import cartes.Carte;
-
-public class MainJoueur implements Iterable<Carte> {
+public class MainJoueur implements Iterable<Carte>{
 	
-	private final List<Carte> listeMainJoueur = new ArrayList<>();
+	List<Carte> listeJoueur = new ArrayList<>();
 	
-	public void prendre(Carte carte) {
-		listeMainJoueur.add(carte);
+	public void prendre(Carte carteAAjouter) {
+		 listeJoueur.add(carteAAjouter);
 	}
 	
-	public void jouer(Carte carte) {
-		assert listeMainJoueur.contains(carte);
-		listeMainJoueur.remove(carte);
+	public void jouer(Carte carteAJouer) {
+		assert(listeJoueur.contains(carteAJouer));
+		listeJoueur.remove(carteAJouer);
 	}
 	
 	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		for (Carte carte : listeMainJoueur) {
-			sb.append(carte).append(" ");
-		}
-		return sb.toString().trim();
-	}
-
+    public Iterator<Carte> iterator() {
+        return listeJoueur.iterator();
+    }
+	
 	@Override
-	public Iterator<Carte> iterator() {
-		return listeMainJoueur.iterator();
-	}
+    public String toString() {
+        return "Main du joueur : " + listeJoueur.toString();
+    }
+
+	
+
+
 }

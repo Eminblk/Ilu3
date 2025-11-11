@@ -1,76 +1,61 @@
 package testsFonctionnels;
 
 import java.util.Iterator;
-import java.util.ConcurrentModificationException;
-import java.util.NoSuchElementException;
 
 import cartes.Botte;
 import cartes.Carte;
 import cartes.JeuDeCartes;
-import cartes.Type;
 import jeu.Sabot;
 
 public class TestSabot {
+	JeuDeCartes jeu = new JeuDeCartes();
+	Sabot sabot = new Sabot(jeu.donnerCartes());
 
-	private final JeuDeCartes jeu = new JeuDeCartes();
-	private final Sabot sabot = new Sabot(jeu.donnerCartes());
-
+	// 4.2.a
 	public void questionA() {
+
 		while (!sabot.estVide()) {
 			Carte carte = sabot.piocher();
 			System.out.println("Je pioche " + carte);
 		}
+//		Console :
+//		Je pioche Accident
+//		Je pioche Accident
+//		Je pioche Accident
+//		Je pioche Rï¿½paration
+//		Je pioche Rï¿½paration
+//		Je pioche Rï¿½paration
+//		Je pioche As du volant
 	}
 
+	// 4.2.b
 	public void questionB() {
-		for (Iterator<Carte> it = sabot.iterator(); it.hasNext();) {
-			Carte carte = it.next();
-			System.out.println("Je pioche " + carte);
-			it.remove();
+		for (Iterator<Carte> iterator = sabot.iterator(); iterator.hasNext();) {
+			System.out.println("Je pioche " + iterator.next());
+			iterator.remove();
 		}
 	}
 
+	// 4.2.c
 	public void questionC() {
-		try {
-			Carte cartePiochee = sabot.piocher();
-			System.out.println("Je pioche " + cartePiochee);
-
-			try {
-				for (Iterator<Carte> iterator = sabot.iterator(); iterator.hasNext();) {
-					Carte carte = iterator.next();
-					System.out.println("Je pioche " + carte);
-					sabot.piocher();
-				}
-			} catch (ConcurrentModificationException e) {
-				System.out.println("Exception attendue car piocher pendant l’itération : " + e);
-			}
-
-			try {
-				for (Iterator<Carte> iterator = sabot.iterator(); iterator.hasNext();) {
-					Carte carte = iterator.next();
-					System.out.println("Je pioche " + carte);
-					sabot.ajouterCarte(new Botte(Type.ACCIDENT));
-				}
-			} catch (ConcurrentModificationException e) {
-				System.out.println("Exception attendue car ajout pendant l’itération : " + e);
-			}
-			
-
-		} catch (NoSuchElementException e) {
-			System.out.println("La pioche est vide: " + e);
+		Carte cartePiochee = sabot.piocher();
+		System.out.println("Je pioche " + cartePiochee);
+		for (Iterator<Carte> iterator = sabot.iterator(); iterator.hasNext();) {
+			Carte carte = iterator.next();
+			System.out.println("Je pioche " + carte);
+			iterator.remove();
+			Carte cartePiochee1 = sabot.piocher();
+			sabot.ajouterCarte(new Botte(cartes.Type.ACCIDENT));
 		}
+		Iterator<Carte> iterator = sabot.iterator();
+		System.out.println("\nLa pioche contient encore des cartes ? " + iterator.hasNext());
 	}
 
 	public static void main(String[] args) {
-		TestSabot test = new TestSabot();
-		System.out.println("--- Question A ---");
-		test.questionA();
-		System.out.println("\n--- Question B ---");
-		TestSabot test2 = new TestSabot();
-		test2.questionB();
-
-		System.out.println("\n--- Question C ---");
-		TestSabot test3 = new TestSabot();
-		test3.questionC();
+		TestSabot testPioche = new TestSabot();
+		testPioche.questionA();
+		testPioche.questionB();
+		testPioche.questionC();
 	}
+
 }

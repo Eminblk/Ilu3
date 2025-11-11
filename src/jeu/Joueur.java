@@ -1,80 +1,69 @@
 package jeu;
-
-import cartes.Carte;
+import java.util.*;
+import cartes.*;
 
 public class Joueur {
+    private String nom;
+    private ZoneDeJeu zone;
+    private MainJoueur main;
 
-	private final String nom; 
-	private final ZoneDeJeu zonedejeu;
-	private final MainJoueur mainDuJoueur;
-	
-	public Joueur(String nom) {
-		this.nom = nom;
-		this.zonedejeu = new ZoneDeJeu();
-		this.mainDuJoueur = new MainJoueur();
-	}
-	
-	public Joueur(String nom, ZoneDeJeu zoneDeJeu) {
-		this.nom = nom;
-		this.zonedejeu = zoneDeJeu;
-		this.mainDuJoueur = new MainJoueur();
-	}
-	
-	public String getNom() {
-		return nom;
-	}
-	
-	public ZoneDeJeu getZoneDeJeu() {
-		return zonedejeu;
-	}
-	
-	public MainJoueur getMainDuJoueur() {
-		return mainDuJoueur;
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Joueur joueur) {
-			return joueur.nom.equals(nom);
-		} 
-		return false;
-	}
-	
-	@Override
-	public String toString() {
-		return nom;
-	}
-	
-	public void donner(Carte carte) {
-		mainDuJoueur.prendre(carte);
-	}
-	
-	public Carte prendreCarte(Sabot sabot) {
-		if (sabot.estVide()) {
-			return null;
-		}
-		Carte c = sabot.piocher();
-		donner(c);
-		return c;
-	}
-	
-	public int donnerKmParcourus() {
-		return zonedejeu.donnerKmParcourus();
-	}
-	
-	public int donnerLimitationVitesse() {
-		return zonedejeu.donnerLimitationVitesse();
-	}
-	
-	public void deposer(Carte carte) {
-		zonedejeu.deposer(carte);
-	}
-	
-	public boolean estDepotAutorise(Carte carte) {
-		return zonedejeu.estDepotAutorise(carte);
-	}
-	
-	public boolean peutAvancer() {
-		return zonedejeu.peutAvancer();
-	}
+    public Joueur(String nom) {
+        this.nom = nom;
+        this.zone = new ZoneDeJeu();
+        this.main = new MainJoueur();
+    }
+
+    public String getNom() { return nom; }
+    public ZoneDeJeu getZoneDeJeu() { return zone; }
+    public MainJoueur getMain() { return main; }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof Joueur j) && nom.equals(j.nom);
+    }
+
+    @Override
+    public String toString() { return nom; }
+
+    public void donner(Carte c) { main.prendre(c); }
+    public void retirerDeLaMain(Carte c) { main.jouer(c); }
+
+    public Carte prendreCarte(Sabot sabot) {
+        if (sabot.estVide()) return null;
+        Carte carte = sabot.piocher();
+        donner(carte);
+        return carte;
+    }
+
+    public Set<Coup> coupsPossibles(Set<Joueur> participants) {
+        Set<Coup> coups = new HashSet<>();
+        for (Joueur j : participants) {
+            for (Carte c : main) {
+                Coup coup = new Coup(this, c, j);
+                if (coup.estValide()) coups.add(coup);
+            }
+        }
+        return coups;
+    }
+
+    public Set<Coup> coupsDefausse() {
+        Set<Coup> coups = new HashSet<>();
+        for (Carte c : main) coups.add(new Coup(this, c, null));
+        return coups;
+    }
+
+    public Coup choisirCoup(Set<Joueur> participants) {
+        Set<Coup> possibles = coupsPossibles(participants);
+        List<Coup> coups = possibles.isEmpty()
+                ? new ArrayList<>(coupsDefausse())
+                : new ArrayList<>(possibles);
+        return coups.get(new Random().nextInt(coups.size()));
+    }
+
+    public String afficherEtatJoueur() {
+        return nom + " : bottes=" + zone.getPileBataille()
+                + ", limite=" + zone.donnerLimitationVitesse()
+                + ", bataille=" + zone.getPileBataille()
+                + ", main=" + main;
+    }
 }

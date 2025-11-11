@@ -1,10 +1,10 @@
 package cartes;
 
-public class Probleme extends Carte {
+public abstract class Probleme extends Carte {
 	
-	Type type; 
+	private Type type;
 	
-	public Probleme (Type type) {
+	protected Probleme(Type type) {
 		this.type = type;
 	}
 	

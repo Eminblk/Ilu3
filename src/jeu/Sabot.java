@@ -1,42 +1,21 @@
 package jeu;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.ConcurrentModificationException;
 
-import cartes.Carte;
+import cartes.*;
 
 public class Sabot implements Iterable<Carte> {
 
-    private final Carte[] cartes;
+    private Carte[] sabot;
     private int nbCartes;
-    private int nbOperations = 0; 
+    private int nbOperationReference = 0;
 
-    public Sabot(Carte[] cartesInitiales) {
-        this.cartes = cartesInitiales;
-        this.nbCartes = cartesInitiales.length;
-    }
-
-    public boolean estVide() {
-        return nbCartes == 0;
-    }
-
-    public void ajouterCarte(Carte c) {
-        if (nbCartes >= cartes.length) {
-            throw new IllegalStateException("Capacité du sabot dépassée");
-        }
-        cartes[nbCartes++] = c;
-        nbOperations++;
-    }
-
-    public Carte piocher() {
-        Iterator<Carte> it = iterator();
-        if (!it.hasNext()) {
-            throw new NoSuchElementException("Sabot vide");
-        }
-        Carte carte = it.next();
-        it.remove();
-        return carte;
+    // ✅ Nouveau constructeur
+    public Sabot(Carte[] cartes) {
+        sabot = cartes;
+        nbCartes = cartes.length;
     }
 
     @Override
@@ -44,43 +23,69 @@ public class Sabot implements Iterable<Carte> {
         return new Iterateur();
     }
 
-    private class Iterateur implements Iterator<Carte> {
-        private int indice = 0;
-        private boolean nextEffectue = false;
-        private int nbOperationsReference = nbOperations;
+    public boolean estVide() {
+        return nbCartes == 0;
+    }
+
+    public void ajouterCarte(Carte carte) {
+        if (nbCartes < sabot.length) {
+            sabot[nbCartes] = carte;
+            nbCartes++;
+            nbOperationReference++;
+        } else {
+            throw new IllegalStateException("Capacité du sabot dépassée");
+        }
+    }
+
+    public Carte piocher() {
+        Iterator<Carte> iter = iterator();
+        Carte premiere = iter.next();
+        iter.remove();
+        System.out.println("Je pioche : " + premiere + "\n");
+        return premiere;
+    }
+
+    // ----- Classe interne -----
+    public class Iterateur implements Iterator<Carte> {
+
+        int indexIter = 0;
+        boolean nextEffectue = false;
+        int nbOperation = nbOperationReference;
 
         private void verificationConcurrence() {
-            if (nbOperations != nbOperationsReference) {
-                throw new ConcurrentModificationException();
-            }
+            if (nbOperation != nbOperationReference)
+                throw new ConcurrentModificationException("Deux modifs concurrentes !");
         }
 
         @Override
         public boolean hasNext() {
-        	verificationConcurrence();
-            return indice < nbCartes;
+            return indexIter < nbCartes;
         }
 
         @Override
         public Carte next() {
-        	verificationConcurrence();
-            if (!hasNext()) throw new NoSuchElementException();
+            verificationConcurrence();
+            if (!hasNext()) {
+                throw new IllegalStateException("Plus de cartes !");
+            }
+            Carte carte = sabot[indexIter];
+            indexIter++;
             nextEffectue = true;
-            return cartes[indice++];
+            return carte;
         }
 
         @Override
         public void remove() {
-        	verificationConcurrence();
-            if (!nextEffectue) throw new IllegalStateException();
-            for (int i = indice - 1; i < nbCartes - 1; i++) {
-                cartes[i] = cartes[i + 1];
+            verificationConcurrence();
+            if (!nextEffectue || nbCartes < 1) {
+                throw new NoSuchElementException("Erreur remove");
             }
+            for (int i = indexIter - 1; i < nbCartes - 1; i++) {
+                sabot[i] = sabot[i + 1];
+            }
+            indexIter--;
             nbCartes--;
-            indice--;
             nextEffectue = false;
-            nbOperations++;
-            nbOperationsReference++;
         }
     }
 }

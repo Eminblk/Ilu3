@@ -1,136 +1,128 @@
 package jeu;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import cartes.*;
 
-import cartes.Attaque;
-import cartes.Bataille;
-import cartes.Borne;
-import cartes.Carte;
-import cartes.DebutLimite;
-import cartes.FinLimite;
-import cartes.Limite;
-import cartes.Parade;
-import cartes.Type;
+public class ZoneDeJeu implements Cartes {
 
-public class ZoneDeJeu {
-	
-	private final List<Bataille> pileBataille = new ArrayList<>();
-	private final List<Limite>   pileLimite   = new ArrayList<>();
-	private final List<Borne>    pileBorne    = new ArrayList<>();
-	
-	
-	public int donnerLimitationVitesse() {
-		if (pileLimite.isEmpty()) {
-			return 200;
-		}
-		Limite sommet = pileLimite.get(pileLimite.size() - 1);
-		if (sommet instanceof FinLimite) {
-			return 200;
-		}
-		return 50;
-	}
-	
-	public int donnerKmParcourus() {
-		int total = 0;
-		for (Borne b : pileBorne) {
-			total += b.getKm();
-		}
-		return total;
-	}
-	
-	public void deposer(Carte carte) {
-		if (carte instanceof Borne borne) {
-			pileBorne.add(borne);
-		} else if (carte instanceof Limite limite) {
-			pileLimite.add(limite);
-		} else if (carte instanceof Bataille bataille) {
-			pileBataille.add(bataille);
-		}
-	}
+    private List<Limite> pileLimites;
+    private List<Bataille> pileBataille;
+    private List<Borne> collectionBornes;
+    private Set<Botte> bottes;
 
-	
-	public boolean peutAvancer() {
-		if (pileBataille.isEmpty()) {
-			return false;
-		}
-		Bataille sommet = pileBataille.get(pileBataille.size() - 1);
-		return (sommet instanceof Parade parade)
-				&& parade.getType() == Type.FEU;
-	}
-	
-	private boolean estBloque() {
-		if (pileBataille.isEmpty()) {
-			return false;
-		}
-		return pileBataille.get(pileBataille.size() - 1) instanceof Attaque;
-	}
-	
-	private boolean estDepotFeuVertAutorise() {
-		if (pileBataille.isEmpty()) {
-			return true;
-		}
-		Bataille sommet = pileBataille.get(pileBataille.size() - 1);
-		
-		if (sommet instanceof Attaque att && att.getType() == Type.FEU) {
-			return true; // feu rouge
-		}
-		if (sommet instanceof Parade parade && parade.getType() != Type.FEU) {
-			return true; // autre parade
-		}
-		return false;
-	}
-	
-	private boolean estDepotBorneAutorise(Borne borne) {
-		return peutAvancer()
-				&& borne.getKm() <= donnerLimitationVitesse()
-				&& donnerKmParcourus() + borne.getKm() <= 1000;
-	}
-	
-	private boolean estDepotLimiteAutorise(Limite limite) {
-		if (limite instanceof DebutLimite) {
-			return pileLimite.isEmpty()
-					|| pileLimite.get(pileLimite.size() - 1) instanceof FinLimite;
-		} else if (limite instanceof FinLimite) {
-			return !pileLimite.isEmpty()
-					&& pileLimite.get(pileLimite.size() - 1) instanceof DebutLimite;
-		}
-		return false;
-	}
-	
-	private boolean estDepotBatailleAutorise(Bataille bataille) {
-		if (bataille instanceof Attaque) {
-			// on peut attaquer si on n'est pas déjà bloqué
-			return !estBloque();
-		}
-		
-		if (bataille instanceof Parade parade) {
-			if (parade.getType() == Type.FEU) {
-				// feu vert
-				return estDepotFeuVertAutorise();
-			} else {
-				// autre parade : il faut une attaque du même type au sommet
-				if (pileBataille.isEmpty()) {
-					return false;
-				}
-				Bataille sommet = pileBataille.get(pileBataille.size() - 1);
-				return (sommet instanceof Attaque att)
-						&& att.getType() == parade.getType();
-			}
-		}
-		return false;
-	}
-	
-	public boolean estDepotAutorise(Carte carte) {
-		if (carte instanceof Borne borne) {
-			return estDepotBorneAutorise(borne);
-		}
-		if (carte instanceof Limite limite) {
-			return estDepotLimiteAutorise(limite);
-		}
-		if (carte instanceof Bataille bataille) {
-			return estDepotBatailleAutorise(bataille);
-		}
-		return false;
-	}
+    public ZoneDeJeu() {
+        pileLimites = new ArrayList<>();
+        pileBataille = new ArrayList<>();
+        collectionBornes = new ArrayList<>();
+        bottes = new HashSet<>();
+    }
+
+    // ====== PARTIE 1 : BOTTES ======
+
+    public boolean estPrioritaire() {
+        return bottes.contains(PRIORITAIRE);
+    }
+
+    @Override
+    public String toString() {
+        return "ZoneDeJeu {" +
+                "\n  Limites : " + pileLimites +
+                "\n  Batailles : " + pileBataille +
+                "\n  Bornes : " + collectionBornes +
+                "\n  Bottes : " + bottes +
+                "\n}";
+    }
+
+    // ============= MÉTHODES =============
+
+    public int donnerLimitationVitesse() {
+        if (estPrioritaire()) return 200;
+        if (pileLimites.isEmpty()) return 200;
+        Carte sommet = pileLimites.get(pileLimites.size() - 1);
+        return (sommet instanceof FinLimite) ? 200 : 50;
+    }
+    
+    public List<Bataille> getPileBataille() {
+        return pileBataille;
+    }
+
+
+    public int donnerKmParcourus() {
+        int total = 0;
+        for (Borne borne : collectionBornes) total += borne.getKm();
+        return total;
+    }
+
+    public void deposer(Carte c) {
+        if (c instanceof Borne) collectionBornes.add((Borne) c);
+        else if (c instanceof Limite) pileLimites.add((Limite) c);
+        else if (c instanceof Bataille) pileBataille.add((Bataille) c);
+        else if (c instanceof Botte) bottes.add((Botte) c);
+    }
+
+    public boolean peutAvancer() {
+        if (pileBataille.isEmpty()) return estPrioritaire();
+
+        Carte sommet = pileBataille.get(pileBataille.size() - 1);
+
+        if (sommet.equals(FEU_VERT)) return true;
+        if (sommet instanceof Parade && estPrioritaire()) return true;
+        if (sommet instanceof Attaque att) {
+            if (estPrioritaire() && att.getType() == Type.FEU) return true;
+            return estPrioritaire() && bottes.contains(new Botte(att.getType()));
+        }
+
+        return false;
+    }
+
+    public boolean estDepotFeuVertAutorise() {
+        if (estPrioritaire()) return false;
+        if (pileBataille.isEmpty()) return true;
+        Carte sommet = pileBataille.get(pileBataille.size() - 1);
+        return sommet.equals(FEU_ROUGE)
+                || (sommet instanceof Parade && !sommet.equals(FEU_VERT))
+                || (sommet instanceof Attaque
+                    && bottes.contains(new Botte(((Attaque) sommet).getType())));
+    }
+
+    public boolean estDepotLimiteAutorise(Limite limite) {
+        if (estPrioritaire()) return false;
+        if (limite instanceof DebutLimite) {
+            return pileLimites.isEmpty() ||
+                    pileLimites.get(pileLimites.size() - 1) instanceof FinLimite;
+        } else if (limite instanceof FinLimite) {
+            return !pileLimites.isEmpty() &&
+                    pileLimites.get(pileLimites.size() - 1) instanceof DebutLimite;
+        }
+        return false;
+    }
+
+    public boolean estDepotBorneAutorise(Borne borne) {
+        return peutAvancer()
+                && borne.getKm() <= donnerLimitationVitesse()
+                && donnerKmParcourus() + borne.getKm() <= 1000;
+    }
+
+    public boolean estDepotBatailleAutorise(Bataille bataille) {
+        if (bottes.contains(new Botte(bataille.getType()))) return false;
+
+        if (bataille instanceof Attaque) return peutAvancer();
+        if (bataille instanceof Parade) {
+            if (bataille.equals(FEU_VERT)) return estDepotFeuVertAutorise();
+            if (!pileBataille.isEmpty()) {
+                Carte sommet = pileBataille.get(pileBataille.size() - 1);
+                return sommet instanceof Attaque
+                        && ((Attaque) sommet).getType() == ((Parade) bataille).getType();
+            }
+        }
+        return false;
+    }
+
+    public boolean estDepotAutorise(Carte carte) {
+        if (carte instanceof Botte) return true;
+        if (carte instanceof Borne) return estDepotBorneAutorise((Borne) carte);
+        if (carte instanceof Limite) return estDepotLimiteAutorise((Limite) carte);
+        if (carte instanceof Bataille) return estDepotBatailleAutorise((Bataille) carte);
+        return false;
+    }
 }

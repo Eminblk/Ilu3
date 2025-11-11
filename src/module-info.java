@@ -4,5 +4,5 @@
 /**
  * 
  */
-module Ilu3 {
+module Entrainement {
 }

@@ -1,6 +1,8 @@
 package cartes;
 
-public class FinLimite extends Limite {
+public class FinLimite extends Limite{
+	
+	
 	@Override
 	public String toString() {
 		return "Fin Limite";
@@ -8,6 +10,8 @@ public class FinLimite extends Limite {
 	
 	@Override
 	public boolean equals(Object obj) {
-	    return obj != null && getClass() == obj.getClass();
+		return obj!= null && getClass() == obj.getClass();
 	}
+
+
 }

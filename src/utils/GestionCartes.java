@@ -1,5 +1,4 @@
 package utils;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,28 +6,20 @@ import java.util.ListIterator;
 import java.util.Random;
 
 public class GestionCartes {
+	
 	private static final Random RANDOM = new Random();
 
-	public static <E> E extraire(List<E> liste) {
-		if (liste.isEmpty()) {
-			throw new IllegalArgumentException("La liste ne doit pas être vide");
-		}
-		int index = liste.size() - 1; // on prend le dernier
-		E element = liste.get(index);
-		liste.remove(index);
-		return element;
-	}
 	
-	public static <E> E extraireV2(List<E> liste) {
-		if (liste.isEmpty()) {
-			throw new IllegalArgumentException("La liste ne doit pas être vide");
-		}
-		int index = RANDOM.nextInt(liste.size());
-		E element = liste.get(index);
-		liste.remove(index);
-		return element;
+	public static <E> E extraire(List<E> liste) {
+	    if (liste.isEmpty()) {
+	        throw new IllegalArgumentException("La liste ne doit pas être vide");
+	    }
+
+	    int index = RANDOM.nextInt(liste.size()); // 🔹 index aléatoire
+	    return liste.remove(index); // retire et renvoie l’élément choisi
 	}
 
+	
 	public static <E> E extraireAvecIterateur(List<E> liste) {
 		if (liste.isEmpty()) {
 			throw new IllegalArgumentException("La liste ne doit pas être vide");
@@ -45,13 +36,16 @@ public class GestionCartes {
 	}
 	
 	public static <E> List<E> melanger(List<E> liste) {
-		List<E> melangee = new ArrayList<>();
-		while (!liste.isEmpty()) {
-			E e = extraireV2(liste);
-			melangee.add(e);
-		}
-		return melangee;
+	    List<E> listeRetour = new ArrayList<>();
+
+	    while (!liste.isEmpty()) {
+	        E element = extraire(liste);  // maintenant aléatoire
+	        listeRetour.add(element);
+	    }
+
+	    return listeRetour;
 	}
+
 
 	public static <E> boolean verifierMelange(List<E> l1, List<E> l2) {
 		if (l1.size() != l2.size())
@@ -64,7 +58,7 @@ public class GestionCartes {
 		}
 		return true;
 	}
-
+	
 	public static <E> List<E> rassembler(List<E> liste) {
 		List<E> resultat = new ArrayList<>();
 
@@ -79,26 +73,34 @@ public class GestionCartes {
 		}
 		return resultat;
 	}
-
+	
 	public static <E> boolean verifierRassemblement(List<E> liste) {
-		if (liste.isEmpty())
-			return true;
+	    if (liste.isEmpty()) return true; // une liste vide est triviale
 
-		ListIterator<E> it1 = liste.listIterator();
-		E precedent = it1.next();
+	    ListIterator<E> iter = liste.listIterator();
+	    E precedent = iter.next(); // premier élément
 
-		while (it1.hasNext()) {
-			E courant = it1.next();
-			if (!courant.equals(precedent)) {
-				ListIterator<E> it2 = liste.listIterator(it1.nextIndex());
-				while (it2.hasNext()) {
-					if (it2.next().equals(precedent)) {
-						return false;
-					}
-				}
-			}
-			precedent = courant;
-		}
-		return true;
+	    // On parcourt la liste à partir du 2e élément
+	    while (iter.hasNext()) {
+	        E courant = iter.next();
+
+	        // Si la valeur change
+	        if (!courant.equals(precedent)) {
+	            // On cherche si la valeur précédente réapparaît plus loin
+	            ListIterator<E> iter2 = liste.listIterator(iter.nextIndex());
+	            while (iter2.hasNext()) {
+	                E suivant = iter2.next();
+	                if (suivant.equals(precedent)) {
+	                    return false; // violation : un ancien élément revient
+	                }
+	            }
+	        }
+
+	        precedent = courant; // on avance la comparaison
+	    }
+
+	    return true; // tout va bien
 	}
+
+	
 }
