@@ -17,7 +17,6 @@ public class ZoneDeJeu implements Cartes {
         bottes = new HashSet<>();
     }
 
-    // ====== PARTIE 1 : BOTTES ======
 
     public boolean estPrioritaire() {
         return bottes.contains(PRIORITAIRE);
@@ -33,7 +32,6 @@ public class ZoneDeJeu implements Cartes {
                 "\n}";
     }
 
-    // ============= MÉTHODES =============
 
     public int donnerLimitationVitesse() {
         if (estPrioritaire()) return 200;
@@ -60,20 +58,28 @@ public class ZoneDeJeu implements Cartes {
         else if (c instanceof Botte) bottes.add((Botte) c);
     }
 
+
     public boolean peutAvancer() {
         if (pileBataille.isEmpty()) return estPrioritaire();
 
-        Carte sommet = pileBataille.get(pileBataille.size() - 1);
+        Bataille sommet = pileBataille.get(pileBataille.size()-1);
+        System.out.println(sommet); 
+        System.out.println("-test-test------------------");
 
-        if (sommet.equals(FEU_VERT)) return true;
-        if (sommet instanceof Parade && estPrioritaire()) return true;
-        if (sommet instanceof Attaque att) {
-            if (estPrioritaire() && att.getType() == Type.FEU) return true;
-            return estPrioritaire() && bottes.contains(new Botte(att.getType()));
+        if(sommet.equals(FEU_VERT)) return true;
+        if(sommet instanceof Parade) return estPrioritaire();
+        if(sommet instanceof Attaque att) {
+        	if(!estPrioritaire() ) return false;
+        	if(att.getType() == Type.FEU ) return true;
+        	return bottes.contains(new Botte(att.getType()));
         }
-
+        
         return false;
+        
+        
+        
     }
+
 
     public boolean estDepotFeuVertAutorise() {
         if (estPrioritaire()) return false;
@@ -91,8 +97,7 @@ public class ZoneDeJeu implements Cartes {
             return pileLimites.isEmpty() ||
                     pileLimites.get(pileLimites.size() - 1) instanceof FinLimite;
         } else if (limite instanceof FinLimite) {
-            return !pileLimites.isEmpty() &&
-                    pileLimites.get(pileLimites.size() - 1) instanceof DebutLimite;
+            return pileLimites.get(pileLimites.size() - 1) instanceof DebutLimite;
         }
         return false;
     }

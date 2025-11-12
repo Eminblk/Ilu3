@@ -212,13 +212,15 @@ public class TestZoneDeJeu {
 		}
 		System.out.println("d�p�t ok ? " + depotOK1);
 		System.out.println("peut avancer ? " + zoneDeJeu.peutAvancer());
-		// botte as du volant
+		// botte as du volant ---------
 		System.out.println("Deposer carte as du volant");
 		depotOK1 = zoneDeJeu.estDepotAutorise(new Botte(Type.ACCIDENT));
 		if (depotOK1) {
 			zoneDeJeu.deposer(new Botte(Type.ACCIDENT));
 		}
 		System.out.println("d�p�t ok ? " + depotOK1);
+		System.out.println("----------------TEST--------------- : " );
+		System.out.println( zoneDeJeu.toString());
 		System.out.println("peut avancer ? " + zoneDeJeu.peutAvancer());
 		// Feu vert
 		System.out.println("Deposer carte Feu vert");
